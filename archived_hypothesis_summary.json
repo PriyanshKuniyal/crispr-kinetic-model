@@ -112,5 +112,7 @@
       "diagnostic_finite_lifetime.py": "206cf6e6627b7226"
     }
   },
-  "git_commit": "pending (set after freeze commit)"
+  "git_commit": "151641adbfd05da946221f570d4c610411be9e14",
+  "git_commit_note": "freeze commit; run: git show 151641a",
+  "pivot_audit_verdict": "PIVOT_TO_FINITE_CAS9_LIFETIME"
 }
