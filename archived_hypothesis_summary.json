@@ -20,7 +20,8 @@
     "n_states": 22,
     "epsilon_sha256_16": "27dc50dfd1bdefc1",
     "forward_rates_sha256_16": "73e674c4930f56d2",
-    "kinetics_unchanged_across_all_phases": true
+    "kinetics_unchanged_across_all_phases": true,
+    "frozen_copy_path": "frozen_parameters/ (dashboard_repo is a NESTED git repo, so its files are not in this repo; exact bytes copied here, SHA-verified)"
   },
   "competitor_generation_logic": {
     "source_functions": [
