@@ -1,0 +1,172 @@
+{
+  "report_date": "2026-06-21",
+  "project": "Competitive Cas9 Multi-Site Kinetic Model",
+  "phase": "NUMERICAL VERIFICATION",
+  "overall_status": "VALIDATION INCOMPLETE - STATE NORMALIZATION ISSUE",
+  
+  "work_completed": {
+    "solver_fix": "Replaced unstable Thomas tridiagonal algorithm with dense batched np.linalg.solve",
+    "validation_framework": "5-step numerical diagnostic suite implemented",
+    "file_modified": "simulate_competitive.py",
+    "lines_added": 450
+  },
+
+  "verification_results": {
+    "STEP_1_M1_VALIDATION": {
+      "status": "PASS",
+      "test": "Single-site competitive model vs. Nature Communications reference",
+      "reference_method": "Matrix exponentiation",
+      "S_site_nM": 0.00634,
+      "C_total_nM": 1.0,
+      "metrics": {
+        "L2_error": 5.065513e-08,
+        "max_absolute_error": 2.173190e-07,
+        "requirement_max_error": 1.0e-06,
+        "relative_error_percent": 2.17e-05
+      },
+      "interpretation": "Competitive solver faithfully reproduces Nature model"
+    },
+
+    "STEP_2_POSITIVITY": {
+      "status": "PASS",
+      "test": "All state occupancies P_i,n(t) >= 0",
+      "metrics": {
+        "minimum_state_value": 0.0,
+        "negative_values_detected": false
+      },
+      "interpretation": "No unphysical oscillations; solver respects boundary conditions"
+    },
+
+    "STEP_3_NORMALIZATION_M1": {
+      "status": "WARN",
+      "test": "State sum = S_site throughout simulation",
+      "S_site_nM": 0.00634,
+      "metrics": {
+        "max_normalization_error_nM": 4.817526e-04,
+        "max_normalization_error_requirement_nM": 1.0e-10,
+        "relative_error_percent": 7.6,
+        "time_of_max_error_seconds": 1000,
+        "accumulation_rate_percent_per_100s": 0.76
+      },
+      "critical_finding": "7.6% systematic state mass loss over 1000 seconds",
+      "possible_causes": [
+        "Time step too coarse (300 points; mean Δt ≈ 3 seconds)",
+        "Semi-implicit time integration (RHS at t_k, LHS at t_{k+1})",
+        "Stiffness amplifying truncation error",
+        "Absorbing boundary condition drift"
+      ]
+    },
+
+    "STEP_4_MASS_CONSERVATION": {
+      "status": "PASS",
+      "test": "C_total = C_free + C_bound throughout simulation",
+      "C_total_nM": 1.0,
+      "metrics": {
+        "max_mass_error_nM": 2.331468e-14,
+        "max_mass_error_requirement_nM": 1.0e-10,
+        "relative_error": 2.331468e-24
+      },
+      "interpretation": "Total Cas9 pool conserved to machine precision"
+    },
+
+    "STEP_5_M10_STABILITY": {
+      "status": "PARTIAL_WARN",
+      "test": "M=10 sites (1 on-target + 9 random off-targets)",
+      "test_duration_seconds": 1000,
+      "time_points": 201,
+      "C_total_nM": 1.0,
+      "metrics": {
+        "positivity": {
+          "status": "PASS",
+          "min_state_value": 0.0
+        },
+        "normalization": {
+          "status": "WARN",
+          "max_error_nM": 4.814886e-04,
+          "relative_error_percent": 7.6
+        },
+        "mass_conservation": {
+          "status": "PASS",
+          "max_error_nM": 2.358491e-11
+        },
+        "on_target_cleavage_final": 0.075945
+      },
+      "consistency_with_M1": "Identical relative normalization error (7.6%)",
+      "interpretation": "Multi-site coupling stable; normalization issue is not site-coupling specific"
+    }
+  },
+
+  "critical_issue": {
+    "name": "State Normalization Drift",
+    "severity": "BLOCKS_CAMPAIGN",
+    "description": "Both M=1 and M=10 lose 7.6% of state probability mass by end of simulation",
+    "magnitude": {
+      "per_site_loss_nM": 4.8e-04,
+      "relative_to_S_site_percent": 7.6,
+      "accumulation_pattern": "Systematic, not random"
+    },
+    "impact_on_science": [
+      "Cleavage fraction = (S_site - Σ_states) / S_site",
+      "7.6% state loss inflates cleaved fraction by 7.6 pp",
+      "All downstream measures (specificity, competition effects) corrupted",
+      "Any conclusion about competition would be unreliable"
+    ],
+    "must_resolve_before": "Campaign execution (Part 4)"
+  },
+
+  "validation_status_summary": {
+    "STEP_1_M1_validation": "PASS - error < 1e-6",
+    "STEP_2_Positivity": "PASS",
+    "STEP_3_Normalization": "WARN - 7.6% drift",
+    "STEP_4_Mass_conservation": "PASS",
+    "STEP_5_M10_stability": "WARN - same drift",
+    "overall": "INCOMPLETE - cannot proceed to campaign"
+  },
+
+  "recommended_next_actions": {
+    "priority_1_required": [
+      {
+        "action": "Increase time grid resolution",
+        "rationale": "Test if O(Δt²) error is responsible; 1000+ points instead of 300",
+        "expected_outcome": "Normalization error should drop by ~4× if Δt is the culprit"
+      },
+      {
+        "action": "Implement true Crank-Nicolson",
+        "rationale": "Current code is semi-implicit; evaluate RHS at average of t_k and t_{k+1}",
+        "expected_outcome": "May eliminate drift if scheme mismatch is the issue"
+      },
+      {
+        "action": "Test implicit Euler (θ=1) fallback",
+        "rationale": "More stable for stiff systems; trade per-step accuracy for convergence",
+        "expected_outcome": "Determine if stability vs. accuracy tradeoff helps"
+      }
+    ],
+    "priority_2_diagnostic": [
+      "Track state-by-state drift (which states lose mass?)",
+      "Run dCas9 (k_cat=0) to isolate cleavage vs. binding drift",
+      "Run with S_site=1e-12 (non-depleting limit) to test competitive coupling",
+      "Verify detailed balance in rate matrix construction"
+    ],
+    "campaign_start_criteria": [
+      "Normalization error < 1e-5 (relaxed) OR",
+      "Drift mechanism understood and documented OR",
+      "Error confined to non-critical component"
+    ]
+  },
+
+  "numerical_constants": {
+    "S_DIPLOID_nM": 0.00634,
+    "time_range_seconds": [0.01, 1000],
+    "k_b_max_s_minus_1": 359787,
+    "k_on_ref_s_minus_1": 8.586e-05,
+    "k_cat_s_minus_1": 2.4
+  },
+
+  "code_metrics": {
+    "file": "simulate_competitive.py",
+    "total_lines": 930,
+    "diagnostic_functions_added": 5,
+    "test_cases_implemented": 5,
+    "solver_change": "Thomas algorithm -> np.linalg.solve"
+  }
+}

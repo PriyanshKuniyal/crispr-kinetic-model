@@ -1,0 +1,116 @@
+{
+  "title": "Competitive finite-pool SpCas9 hypothesis \u2014 FROZEN / REJECTED for practical relevance",
+  "date": "2026-07-07",
+  "status": "REJECTED (practical biological relevance); pivot audit performed separately",
+  "exact_parameters": {
+    "S_DIPLOID_original_nM": 0.00634,
+    "S_site_derived_nM_by_volume": {
+      "250": 0.013284312537390774,
+      "500": 0.006642156268695387,
+      "1000": 0.0033210781343476934
+    },
+    "note_S_site": "0.00634 nM ~ 524 fL nucleus; S_site=2/(N_A*V) used per volume in scaling phase",
+    "k_on_ref": 8.585963079544979e-05,
+    "k_f": 641.2890380993068,
+    "k_cat": 2.392863651511265,
+    "F0": 5.040250116804046,
+    "n_epsilon": 41,
+    "n_forward_rates": 22,
+    "guide_length": 20,
+    "n_states": 22,
+    "epsilon_sha256_16": "27dc50dfd1bdefc1",
+    "forward_rates_sha256_16": "73e674c4930f56d2",
+    "kinetics_unchanged_across_all_phases": true
+  },
+  "competitor_generation_logic": {
+    "source_functions": [
+      "go_no_go.build_panel (seeded, hash(name)-nondeterministic across processes)",
+      "audit_panels.build_panel_det (deterministic replica, fixed seeds 101/202)"
+    ],
+    "provenance": "epsilon/rates literature-fitted (Nature Comm 2022); mismatch POSITIONS and CLASS MULTIPLICITIES are SYNTHETIC (sampled), NOT literature/GUIDE-seq-derived",
+    "DEFENSIBLE": {
+      "fractions": {
+        "sink": 0.02,
+        "relevant": 0.18,
+        "weak": 0.8
+      },
+      "sink": "1-2 mm in nt15-20",
+      "relevant": "3-4 mm in nt9-20 (no seed mm)",
+      "weak": "60%: 1-2 seed mm(nt1-8)+3 distal mm(nt9-20); 40%: 5 mm spread nt1-20"
+    },
+    "CONTROLLED_STRESS": {
+      "fractions": {
+        "near_perfect": 0.2,
+        "seed": 0.2,
+        "mid": 0.2,
+        "distal": 0.2,
+        "weak": 0.2
+      },
+      "note": "adversarial worst-case, over-represents strong binders; NOT biological"
+    }
+  },
+  "numerical_validation": {
+    "M1_reproduces_nature_max_pp": 0.050178654233623554,
+    "gpu_vs_cpu_max_clv_diff": {
+      "M1": 4.111294638065033e-16,
+      "M10": 4.111294638065033e-16
+    },
+    "Ssite_1e4_dev_normal_pp": 0.32020007212626433,
+    "Ssite_1e4_dev_tiny_pp": 0.05006765403894331,
+    "conservation_min_cleaved": -3.6534220378202804e-10,
+    "conservation_min_Cfree": 0.9758433073960956,
+    "any_nan_inf": false,
+    "certification_verdict": "PASS",
+    "fast_solver_vs_brentq": "on-target 0.0000 pp, C_free <1e-8 (validated in plausibility phase)"
+  },
+  "gpu_campaign_outputs": {
+    "verdict": "PIVOT_EFFECT_ONLY_IN_EXTREME_REGIMES",
+    "backend": "CuPy 14.1.1 / CUDA 12.9 / RTX 5050 Laptop GPU (cc 12.0)",
+    "headline": "max transient on-target 17.29pp @ DEFENSIBLE M=10000 C=0.1nM; specificity <=10.67%; no robust ranking inversion; final editing ~unchanged",
+    "panel_audit_verdict": "SIGNAL_ROBUST_TO_PANEL_COMPOSITION",
+    "files": [
+      "artifacts/go_no_go/REPORT.md",
+      "artifacts/go_no_go/results.csv",
+      "artifacts/go_no_go/results.json",
+      "artifacts/go_no_go/panel_audit_report.md",
+      "artifacts/go_no_go/ablation_results.csv"
+    ]
+  },
+  "molecule_count_scaling_outputs": {
+    "verdict": "PIVOT_NARROW_PLAUSIBLE_REGIME",
+    "verdict_info": {
+      "n_strong": 61,
+      "n_strong_plausible": 0,
+      "n_weak_plausible": 16,
+      "plausibility_ceiling_M": 1000,
+      "plausibility_floor_Nc": 100
+    },
+    "ratio_law": "effect governed by 2M/Nc (competitor copies per Cas9 molecule), ~volume-independent",
+    "min_M_for_5pp": 3000,
+    "min_M_for_25pct_t50": 3000,
+    "min_M_for_1pp": 300,
+    "min_M_for_10pct_t50": 1000,
+    "plausible_envelope_max": "~2-4.4pp transient / ~6% t50 / ~6% depletion at M=1000 ceiling + scarce Cas9",
+    "files": [
+      "artifacts/plausibility/plausibility_report.md",
+      "artifacts/plausibility/plausibility_grid.csv",
+      "artifacts/plausibility/plausibility.json",
+      "artifacts/plausibility/finite_lifetime_diagnostic.json",
+      "artifacts/plausibility/phase_dOn_V*.png",
+      "artifacts/plausibility/phase_t50delay_V*.png"
+    ]
+  },
+  "code_files": {
+    "go_no_go": "go_no_go.py",
+    "audit": "audit_panels.py",
+    "scaling": "plausibility_scaling.py",
+    "diagnostic": "diagnostic_finite_lifetime.py",
+    "sha": {
+      "go_no_go.py": "ba2d66b1616fe7a0",
+      "audit_panels.py": "074be1f46e6e2d51",
+      "plausibility_scaling.py": "ddd84fdc063924d6",
+      "diagnostic_finite_lifetime.py": "206cf6e6627b7226"
+    }
+  },
+  "git_commit": "pending (set after freeze commit)"
+}

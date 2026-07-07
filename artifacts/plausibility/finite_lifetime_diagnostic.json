@@ -1,0 +1,237 @@
+[
+  {
+    "label": "plausible_max  M1000/Cas100/250fL",
+    "plausibility": "plausible (envelope corner)",
+    "M": 1000,
+    "Nc": 100,
+    "V_fL": 250,
+    "C_total_nM": 0.6642156268695387,
+    "S_site_nM": 0.013284312537390774,
+    "ratio_2M_over_Nc": 20.0,
+    "max_transient_pp": 4.41650531354465,
+    "time_of_max_transient_s": 19723.277243616743,
+    "time_of_max_transient_h": 5.478688123226873,
+    "on_A_final": 1.0,
+    "on_B_final": 1.0,
+    "cutoffs": {
+      "6h": {
+        "on_A_yield": 0.6803,
+        "on_B_yield": 0.6362,
+        "deficit_pp": 4.404,
+        "relative_loss_pct": 6.47
+      },
+      "12h": {
+        "on_A_yield": 0.8975,
+        "on_B_yield": 0.8676,
+        "deficit_pp": 2.986,
+        "relative_loss_pct": 3.33
+      },
+      "24h": {
+        "on_A_yield": 0.9896,
+        "on_B_yield": 0.9828,
+        "deficit_pp": 0.676,
+        "relative_loss_pct": 0.68
+      },
+      "48h": {
+        "on_A_yield": 0.9999,
+        "on_B_yield": 0.9997,
+        "deficit_pp": 0.017,
+        "relative_loss_pct": 0.02
+      },
+      "72h": {
+        "on_A_yield": 1.0,
+        "on_B_yield": 1.0,
+        "deficit_pp": 0.0,
+        "relative_loss_pct": 0.0
+      }
+    }
+  },
+  {
+    "label": "plausible_mod  M1000/Cas1000/500fL",
+    "plausibility": "plausible (moderate Cas9)",
+    "M": 1000,
+    "Nc": 1000,
+    "V_fL": 500,
+    "C_total_nM": 3.321078134347693,
+    "S_site_nM": 0.006642156268695387,
+    "ratio_2M_over_Nc": 2.0,
+    "max_transient_pp": 2.0720571523068165,
+    "time_of_max_transient_s": 4161.470898512164,
+    "time_of_max_transient_h": 1.1559641384756012,
+    "on_A_final": 1.0,
+    "on_B_final": 1.0,
+    "cutoffs": {
+      "6h": {
+        "on_A_yield": 0.9966,
+        "on_B_yield": 0.9955,
+        "deficit_pp": 0.113,
+        "relative_loss_pct": 0.11
+      },
+      "12h": {
+        "on_A_yield": 1.0,
+        "on_B_yield": 1.0,
+        "deficit_pp": 0.001,
+        "relative_loss_pct": 0.0
+      },
+      "24h": {
+        "on_A_yield": 1.0,
+        "on_B_yield": 1.0,
+        "deficit_pp": -0.0,
+        "relative_loss_pct": -0.0
+      },
+      "48h": {
+        "on_A_yield": 1.0,
+        "on_B_yield": 1.0,
+        "deficit_pp": 0.0,
+        "relative_loss_pct": 0.0
+      },
+      "72h": {
+        "on_A_yield": 1.0,
+        "on_B_yield": 1.0,
+        "deficit_pp": 0.0,
+        "relative_loss_pct": 0.0
+      }
+    }
+  },
+  {
+    "label": "plausible_low  M300/Cas300/500fL",
+    "plausibility": "plausible (defensible burden)",
+    "M": 300,
+    "Nc": 300,
+    "V_fL": 500,
+    "C_total_nM": 0.9963234403043079,
+    "S_site_nM": 0.006642156268695387,
+    "ratio_2M_over_Nc": 2.0,
+    "max_transient_pp": 0.6943566133584489,
+    "time_of_max_transient_s": 13096.486865340807,
+    "time_of_max_transient_h": 3.637913018150224,
+    "on_A_final": 1.0,
+    "on_B_final": 1.0,
+    "cutoffs": {
+      "6h": {
+        "on_A_yield": 0.8191,
+        "on_B_yield": 0.8134,
+        "deficit_pp": 0.579,
+        "relative_loss_pct": 0.71
+      },
+      "12h": {
+        "on_A_yield": 0.9671,
+        "on_B_yield": 0.9651,
+        "deficit_pp": 0.195,
+        "relative_loss_pct": 0.2
+      },
+      "24h": {
+        "on_A_yield": 0.9989,
+        "on_B_yield": 0.9989,
+        "deficit_pp": 0.008,
+        "relative_loss_pct": 0.01
+      },
+      "48h": {
+        "on_A_yield": 1.0,
+        "on_B_yield": 1.0,
+        "deficit_pp": -0.0,
+        "relative_loss_pct": -0.0
+      },
+      "72h": {
+        "on_A_yield": 1.0,
+        "on_B_yield": 1.0,
+        "deficit_pp": -0.0,
+        "relative_loss_pct": -0.0
+      }
+    }
+  },
+  {
+    "label": "IMPLAUSIBLE    M3000/Cas100/250fL",
+    "plausibility": "IMPLAUSIBLE burden (contrast)",
+    "M": 3000,
+    "Nc": 100,
+    "V_fL": 250,
+    "C_total_nM": 0.6642156268695387,
+    "S_site_nM": 0.013284312537390774,
+    "ratio_2M_over_Nc": 60.0,
+    "max_transient_pp": 11.632994604879865,
+    "time_of_max_transient_s": 21406.414622449163,
+    "time_of_max_transient_h": 5.946226284013656,
+    "on_A_final": 1.0,
+    "on_B_final": 1.0,
+    "cutoffs": {
+      "6h": {
+        "on_A_yield": 0.6803,
+        "on_B_yield": 0.5639,
+        "deficit_pp": 11.632,
+        "relative_loss_pct": 17.1
+      },
+      "12h": {
+        "on_A_yield": 0.8975,
+        "on_B_yield": 0.8097,
+        "deficit_pp": 8.771,
+        "relative_loss_pct": 9.77
+      },
+      "24h": {
+        "on_A_yield": 0.9896,
+        "on_B_yield": 0.9643,
+        "deficit_pp": 2.521,
+        "relative_loss_pct": 2.55
+      },
+      "48h": {
+        "on_A_yield": 0.9999,
+        "on_B_yield": 0.9988,
+        "deficit_pp": 0.112,
+        "relative_loss_pct": 0.11
+      },
+      "72h": {
+        "on_A_yield": 1.0,
+        "on_B_yield": 1.0,
+        "deficit_pp": 0.004,
+        "relative_loss_pct": 0.0
+      }
+    }
+  },
+  {
+    "label": "IMPLAUSIBLE    M10000/Cas100/500fL",
+    "plausibility": "IMPLAUSIBLE burden (contrast)",
+    "M": 10000,
+    "Nc": 100,
+    "V_fL": 500,
+    "C_total_nM": 0.33210781343476936,
+    "S_site_nM": 0.006642156268695387,
+    "ratio_2M_over_Nc": 200.0,
+    "max_transient_pp": 17.702113840138267,
+    "time_of_max_transient_s": 48550.36157379012,
+    "time_of_max_transient_h": 13.486211548275033,
+    "on_A_final": 1.0,
+    "on_B_final": 1.0,
+    "cutoffs": {
+      "6h": {
+        "on_A_yield": 0.4346,
+        "on_B_yield": 0.2961,
+        "deficit_pp": 13.852,
+        "relative_loss_pct": 31.87
+      },
+      "12h": {
+        "on_A_yield": 0.6801,
+        "on_B_yield": 0.5041,
+        "deficit_pp": 17.606,
+        "relative_loss_pct": 25.89
+      },
+      "24h": {
+        "on_A_yield": 0.8978,
+        "on_B_yield": 0.7546,
+        "deficit_pp": 14.322,
+        "relative_loss_pct": 15.95
+      },
+      "48h": {
+        "on_A_yield": 0.9894,
+        "on_B_yield": 0.94,
+        "deficit_pp": 4.936,
+        "relative_loss_pct": 4.99
+      },
+      "72h": {
+        "on_A_yield": 0.9989,
+        "on_B_yield": 0.9855,
+        "deficit_pp": 1.341,
+        "relative_loss_pct": 1.34
+      }
+    }
+  }
+]

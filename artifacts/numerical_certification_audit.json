@@ -1,0 +1,17 @@
+{
+  "verdict": "PASS",
+  "conclusion": "The apparent 7.6% state loss is expected cleavage flow, not numerical drift.",
+  "S_site_nM": 0.00634,
+  "C_total_nM": 1.0,
+  "time_final_s": 1000.0,
+  "state_sum_final_nM": 0.005858247422563469,
+  "cleaved_fraction_final": 0.07598621095213424,
+  "cleaved_mass_final_nM": 0.0004817525774365311,
+  "active_state_plus_cleaved_residual_max_nM": 2.710505431213761e-20,
+  "active_state_plus_cleaved_residual_mean_nM": 4.96265610998193e-22,
+  "dcas_state_conservation_error_max_nM": 1.465841337200402e-16,
+  "dcas_state_conservation_error_mean_nM": 1.5981356142470717e-17,
+  "apparent_state_loss_fraction": 0.0759862109521342,
+  "final_cleaved_consistency_error": 4.163336342344337e-17,
+  "figure": "C:\\Users\\Priyansh Kuniyal\\kinetic modelling of CRISPR\\artifacts\\conservation_audit.png"
+}

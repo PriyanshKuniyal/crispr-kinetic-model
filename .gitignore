@@ -1,0 +1,6 @@
+.venv/
+__pycache__/
+*.pyc
+nature_communications_paper.pdf
+dashboard_repo.worktrees/
+.vscode/
