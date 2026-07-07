@@ -4,3 +4,5 @@ __pycache__/
 nature_communications_paper.pdf
 dashboard_repo.worktrees/
 .vscode/
+.claude/
+dashboard_repo/
