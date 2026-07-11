@@ -82,25 +82,36 @@ def get_rate_pair(epsilon, base_fwd, mismatch_positions, guide_length=20):
 # 2. VECTORIZED CRANK-NICOLSON TRIDIAGONAL SOLVER (GPU)
 # ----------------------------------------------------------------------------
 def _tri_solve_gpu(L, D, U, B):
-    n = D.shape[1]
-    cp_arr = cp.zeros_like(L)
-    dp_arr = cp.zeros_like(D)
+    # Instead of an unstable Thomas algorithm, we construct the batched tridiagonal matrices
+    # and use cp.linalg.solve to ensure mass conservation and positivity are correctly maintained.
+    M_batch = D.shape[0]
+    N = D.shape[1]
 
-    cp_arr[:, 0] = U[:, 0] / D[:, 0]
-    dp_arr[:, 0] = B[:, 0] / D[:, 0]
+    # Construct batched tridiagonal matrices
+    A = cp.zeros((M_batch, N, N))
 
-    for j in range(1, n - 1):
-        denom    = D[:, j] - L[:, j-1] * cp_arr[:, j-1]
-        cp_arr[:, j] = U[:, j] / denom
-        dp_arr[:, j] = (B[:, j] - L[:, j-1] * dp_arr[:, j-1]) / denom
+    # We need to fill A using advanced indexing
+    # Create indices for the batch dimension and spatial dimensions
+    batch_idx = cp.arange(M_batch)[:, None]
+    diag_idx = cp.arange(N)[None, :]
 
-    denom      = D[:, n-1] - L[:, n-2] * cp_arr[:, n-2]
-    dp_arr[:, n-1] = (B[:, n-1] - L[:, n-2] * dp_arr[:, n-2]) / denom
+    # Diagonal
+    A[batch_idx, diag_idx, diag_idx] = D
 
-    X = cp.zeros_like(D)
-    X[:, n-1] = dp_arr[:, n-1]
-    for j in range(n - 2, -1, -1):
-        X[:, j] = dp_arr[:, j] - cp_arr[:, j] * X[:, j+1]
+    # Upper diagonal
+    upper_i = cp.arange(N-1)[None, :]
+    upper_j = cp.arange(1, N)[None, :]
+    A[batch_idx, upper_i, upper_j] = U
+
+    # Lower diagonal
+    lower_i = cp.arange(1, N)[None, :]
+    lower_j = cp.arange(N-1)[None, :]
+    A[batch_idx, lower_i, lower_j] = L
+
+    # Solve batched system: A X = B
+    # cp.linalg.solve expects right-hand side to be (..., N) or (..., N, K)
+    # If B is (M, N), cp.linalg.solve(A, B) natively solves it as (M, N, 1) and returns (M, N)
+    X = cp.linalg.solve(A, B[..., None])[..., 0]
     return X
 
 def _rhs_times_P_gpu(P, kf_eff, kb, h, theta):
@@ -118,21 +129,28 @@ def _lhs_matrices_gpu(kf_eff, kb, h, theta):
     L = -theta * h * kf_eff[:, :-1]
     return L, D, U
 
-def cn_step_gpu(P, c_free, fwd, bck, h, theta=0.5):
-    kf_eff          = fwd.copy()
-    kf_eff[:, 0]   *= c_free
-    RHS = _rhs_times_P_gpu(P, kf_eff, bck, h, theta)
-    L, D, U = _lhs_matrices_gpu(kf_eff, bck, h, theta)
+def cn_step_gpu(P, c_free_prev, c_free_next, fwd, bck, h, theta=0.5):
+    kf_eff_prev = fwd.copy()
+    kf_eff_prev[:, 0] *= c_free_prev
+
+    kf_eff_next = fwd.copy()
+    kf_eff_next[:, 0] *= c_free_next
+
+    RHS = _rhs_times_P_gpu(P, kf_eff_prev, bck, h, theta)
+    L, D, U = _lhs_matrices_gpu(kf_eff_next, bck, h, theta)
     return _tri_solve_gpu(L, D, U, RHS)
 
 # ----------------------------------------------------------------------------
 # 3. COMPETITIVE STEP
 # ----------------------------------------------------------------------------
-def competitive_step_gpu(P, C_total, fwd, bck, h, theta=0.5, S_site=S_DIPLOID):
-    def g(cf):
-        P_trial = cn_step_gpu(P, cf, fwd, bck, h, theta)
+def competitive_step_gpu(P, C_total, fwd, bck, h, theta=0.5, S_site=S_DIPLOID, c_free_prev=None):
+    if c_free_prev is None:
+        c_free_prev = C_total
+
+    def g(cf_guess):
+        P_trial = cn_step_gpu(P, c_free_prev, cf_guess, fwd, bck, h, theta)
         C_bound = P_trial[:, 1:].sum()
-        return float(cf - (C_total - float(C_bound)))
+        return float(cf_guess - (C_total - float(C_bound)))
 
     try:
         c_free = brentq(g, 0.0, C_total, xtol=1e-14, rtol=1e-10, maxiter=100)
@@ -140,7 +158,7 @@ def competitive_step_gpu(P, C_total, fwd, bck, h, theta=0.5, S_site=S_DIPLOID):
         g0, gC = g(0.0), g(C_total)
         c_free = 0.0 if abs(g0) < abs(gC) else C_total
 
-    P_next = cn_step_gpu(P, c_free, fwd, bck, h, theta)
+    P_next = cn_step_gpu(P, c_free_prev, c_free, fwd, bck, h, theta)
     return P_next, c_free
 
 # ----------------------------------------------------------------------------
@@ -174,7 +192,8 @@ def simulate_gpu(C_total, site_mismatches, t_points, S_site=S_DIPLOID, theta=0.5
 
     for k in range(T - 1):
         h = t_points[k+1] - t_points[k]
-        P_gpu, cf = competitive_step_gpu(P_gpu, C_total, fwd_gpu, bck_gpu, h, theta, S_site)
+        c_free_prev = Cf_hist[k]
+        P_gpu, cf = competitive_step_gpu(P_gpu, C_total, fwd_gpu, bck_gpu, h, theta, S_site, c_free_prev=c_free_prev)
         P_cpu = P_gpu.get()
         P_hist[k+1]  = P_cpu
         Cf_hist[k+1] = cf
